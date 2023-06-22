@@ -18,9 +18,10 @@ class _InfoScreenState extends State<InfoScreen> {
     bool isPressed = false;
 
     return Scaffold(
+      backgroundColor: Color(0xff101010),
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Color(0xff1C1E1F),
+        backgroundColor: Color(0xff101010),
         iconTheme: IconThemeData(color: Colors.white),
         actions: [
           PopupMenuButton(
@@ -46,101 +47,129 @@ class _InfoScreenState extends State<InfoScreen> {
               })
         ],
       ),
-      body: Center(
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  message.replaceAll("\n", " "),
-                  style: TextStyle(fontSize: 18),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: message.isEmpty ? Text('Empty') : Text(
+                    message.replaceAll("\n", " "),
+                    style: TextStyle(fontSize: 18),
+                  ),
                 ),
-              ),
-              isPressed == false
-                  ? SizedBox.shrink()
-                  : Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.red,
+                answer.isEmpty
+                    ? SizedBox.shrink()
+                    : Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Card(
+                          color: Colors.white,
+                          child: Center(
+                              child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Text(
+                              answer.replaceAll("\n", " "),
+                              style: TextStyle(fontSize: 16,color: Colors.black),
+                            ),
+                          )),
+                        ),
                       ),
-                    ),
-              answer.isEmpty
-                  ? SizedBox.shrink()
-                  : Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Card(
-                        color: Colors.green,
-                        child: Center(
-                            child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Text(
-                            answer.replaceAll("\n", " "),
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        )),
-                      ),
-                    ),
-            ]),
+              ]),
+        ),
       ),
-      bottomNavigationBar: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 22.0, right: 5, left: 15),
-              child: InkWell(
-                focusColor: Colors.red,
-                borderRadius: BorderRadius.circular(24),
-                onTap: () async {
-                  await ApiService.getModels();
-                },
-                child: Container(
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: Colors.deepPurple,
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    'Kek',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 22.0, right: 5, left: 15),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(24),
-                onTap: () async {
-                  setState(() {
-                    isPressed = true;
-                    print(isPressed);
-                  });
-                  answer =
-                      await ApiService.getAnswer(message.replaceAll("\n", " "));
-                  setState(() {
-                    isPressed = false;
-                  });
-                },
-                child: Container(
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: Colors.deepPurple,
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    'Short answer',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.only(top: 18.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 22.0, right: 5, left: 15),
+                child: InkWell(
+                  focusColor: Colors.red,
+                  borderRadius: BorderRadius.circular(24),
+                  onTap: () async {
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (BuildContext context) {
+                        return Dialog(
+                          backgroundColor: Colors.transparent,
+                          surfaceTintColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          elevation: 0,
+                          child: Center(child: CircularProgressIndicator(
+                            color: Colors.pinkAccent,
+                          )),
+                        );
+                      },
+                    );
+                    answer =
+                    await ApiService.getLongAnswer(message.replaceAll("\n", " "));
+                    Navigator.pop(context);
+                    setState(() {
+                    });
+                  },
+                  child: Container(
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.redAccent,
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      'Answer',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 22.0, right: 5, left: 15),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(24),
+                  onTap: () async {
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (BuildContext context) {
+                        return Dialog(
+                          backgroundColor: Colors.transparent,
+                          surfaceTintColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          elevation: 0,
+                          child: Center(child: CircularProgressIndicator(
+                            color: Colors.pinkAccent,
+                          )),
+                        );
+                      },
+                    );
+                    answer =
+                        await ApiService.getAnswer(message.replaceAll("\n", " "));
+                    Navigator.pop(context);
+                    setState(() {
+                    });
+                  },
+                  child: Container(
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.pinkAccent,
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      'Short answer',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

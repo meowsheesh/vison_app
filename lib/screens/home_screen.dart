@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'dart:io';
@@ -16,8 +17,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
   @override
   void initState() {
+    final box = Hive.openBox('notes_box');
     print('inited');
     super.initState();
   }
@@ -33,6 +36,17 @@ class _HomeScreenState extends State<HomeScreen> {
       },
       builder: (context, state) {
         return Scaffold(
+          backgroundColor: Color(0xff101010),
+          appBar: AppBar(
+            backgroundColor: Color(0xff101010),
+            title: Text(''),
+            actions: [
+              IconButton(
+                  onPressed: () => Navigator.pushNamed(context, '/historyScreen'),
+                  icon: Icon(Icons.history, color: Colors.greenAccent,),
+              ),
+            ],
+          ),
           body: Center(
               child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -49,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
               cardWidget(
                 text: 'From Gallery',
                 icon: Icons.photo,
-                iconColor: Colors.deepPurple,
+                iconColor: Colors.redAccent,
                 onTap: () async {
                   BlocProvider.of<HomeScreenBloc>(context)
                       .add(OnChooseImageTapped());

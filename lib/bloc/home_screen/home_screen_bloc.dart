@@ -2,14 +2,18 @@ import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:textocr/bloc/home_screen/home_screen.dart';
+import 'package:textocr/services/history.dart';
 
 final ImagePicker picker = ImagePicker();
 final textRecognizer = TextRecognizer(script: TextRecognitionScript.latin);
 
 class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
-  HomeScreenBloc() : super(HomeScreenInitial()) {
+  final HistoryService _historyService;
+
+  HomeScreenBloc(this._historyService) : super(HomeScreenInitial()) {
     on<InitEvent>(_init);
     on<OnChooseImageTapped>(_chooseImageTapped);
     on<OnTakeImageTapped>(_takePhotoImage);
@@ -30,7 +34,12 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
     RecognizedText recognizedText =
         await textRecognizer.processImage(inputImage);
     String text = await recognizedText.text;
-    print(text);
+    try{
+      _historyService.addTask(text, image.path.toString());
+    }catch(e,s){
+      print(s);
+      print(e);
+    }
     emit(ImageChoosenState(text: text));
     emit(InitState());
   }
@@ -43,7 +52,13 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
     RecognizedText recognizedText =
         await textRecognizer.processImage(inputImage);
     String text = await recognizedText.text;
-    print(text);
+    try{
+      _historyService.addTask(text, photo.path.toString());
+    }catch(e,s){
+      print(s);
+      print(e);
+    }
+
     emit(ImageChoosenState(text: text));
     emit(InitState());
   }
